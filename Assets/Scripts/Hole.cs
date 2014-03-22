@@ -3,6 +3,13 @@ using System.Collections;
 
 public class Hole : MonoBehaviour
 {
+    #region Events
+    public delegate void MoveAction();
+    public static event MoveAction OnMoveBlock;
+    public static event MoveAction OnStartShuffle;
+    public static event MoveAction OnEndShuffle;
+    #endregion
+
     #region Fields
     public float speed = 10.0f;
     private RaycastHit hit;
@@ -19,7 +26,6 @@ public class Hole : MonoBehaviour
     #region Update
     void Update()
     {
-
         if (isShuffling)
         {
             Shuffle();
@@ -46,6 +52,8 @@ public class Hole : MonoBehaviour
     {
         if (!isShuffling)
         {
+            if (OnStartShuffle != null)
+                OnStartShuffle();
             isShuffling = true;
             StartCoroutine("Shuffling");
         }
@@ -89,6 +97,9 @@ public class Hole : MonoBehaviour
         }
 
         isShuffling = false;
+
+        if (OnEndShuffle != null)
+            OnEndShuffle();
     }
     #endregion
 
@@ -151,6 +162,12 @@ public class Hole : MonoBehaviour
         {
             startTimeMovement = Time.time;
             isMoving = true;
+
+            if (!isShuffling)
+            {
+                if (OnMoveBlock != null)
+                    OnMoveBlock();
+            }
         }
 
         return true;
@@ -165,6 +182,12 @@ public class Hole : MonoBehaviour
         {
             startTimeMovement = Time.time;
             isMoving = true;
+
+            if (!isShuffling)
+            {
+                if (OnMoveBlock != null)
+                    OnMoveBlock();
+            }
         }
 
         return true;
@@ -179,6 +202,12 @@ public class Hole : MonoBehaviour
         {
             startTimeMovement = Time.time;
             isMoving = true;
+
+            if (!isShuffling)
+            {
+                if (OnMoveBlock != null)
+                    OnMoveBlock();
+            }
         }
 
         return true;
@@ -193,6 +222,12 @@ public class Hole : MonoBehaviour
         {
             startTimeMovement = Time.time;
             isMoving = true;
+
+            if (!isShuffling)
+            {
+                if (OnMoveBlock != null)
+                    OnMoveBlock();
+            }
         }
 
         return true;
