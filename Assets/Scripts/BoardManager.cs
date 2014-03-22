@@ -76,14 +76,12 @@ public class BoardManager : MonoBehaviour
     #region Draw Header
     void DrawHeader()
     {
-        GUILayout.BeginArea(new Rect(padding / 2.0f, padding, Screen.width - padding, 100.0f));
+        GUILayout.BeginArea(new Rect(0.0f, 10.0f, Screen.width, 120.0f));
         GUILayout.BeginHorizontal();
-
-        GUILayout.Label(string.Format("Moves: {0}", totalMovement.ToString("000")), 
-            GUILayout.Width((Screen.width - padding) / 2.0f));
-        GUILayout.Label(string.Format("Time: {0}:{1}", (totalTime / 60).ToString("00"), (totalTime % 60).ToString("00")), 
-            GUILayout.Width((Screen.width - padding) / 2.0f));
-
+        GUILayout.Label(string.Format("Moves\n{0}", totalMovement.ToString("000")),
+            GUILayout.Width(Screen.width / 2.0f));
+        GUILayout.Label(string.Format("Time\n{0}:{1}", (totalTime / 60).ToString("00"), (totalTime % 60).ToString("00")),
+            GUILayout.Width(Screen.width / 2.0f));
         GUILayout.EndHorizontal();
         GUILayout.EndArea();
     }
@@ -92,7 +90,7 @@ public class BoardManager : MonoBehaviour
     #region Draw Buttons
     void DrawFooter()
     {
-        GUILayout.BeginArea(new Rect(padding / 2.0f, Screen.height - 100.0f, Screen.width - padding, 100.0f));
+        GUILayout.BeginArea(new Rect(0.0f, Screen.height - 80.0f, Screen.width, 80.0f));
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
 
