@@ -110,7 +110,7 @@ public class BoardManager : MonoBehaviour
 
         if (GUILayout.Button("Quit", GUILayout.Width(btnWidth), GUILayout.Height(btnHeight)))
         {
-            Application.Quit();
+            Application.LoadLevel("Menu");
         }
 
         GUILayout.FlexibleSpace();
