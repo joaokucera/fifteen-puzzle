@@ -125,7 +125,7 @@ public class BoardManager : MonoBehaviour
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("<size=20>OK</size>"))
         {
-            Application.LoadLevel("Level");
+            Application.LoadLevel("Menu");
         }
 
         if (GUILayout.Button("<size=20>SHARE</size>"))

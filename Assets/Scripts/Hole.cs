@@ -22,7 +22,12 @@ public class Hole : MonoBehaviour
     public int moveTimes = 50;
     private float startTimeMovement;
     public bool isGameOver = false;
+
+    private float threshold = 70.0f;
+    private Vector2 finalFingerPosition;  
+    private Vector2 lastFingerPosition; 
     #endregion
+
 
     void OnEnable()
     {
@@ -59,8 +64,10 @@ public class Hole : MonoBehaviour
                 }
                 else
                 {
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
                     DebugInputs();
+#elif UNITY_ANDROID
+                    AndroidInputs();
 #endif
                 }
             }
@@ -269,6 +276,40 @@ public class Hole : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.DownArrow))
             MoveBlockToDown();
+
+    }
+
+    void AndroidInputs()
+    {
+        foreach (Touch touch in Input.touches)
+        {
+            if (touch.phase == TouchPhase.Began)
+            {
+                finalFingerPosition = touch.position;
+                lastFingerPosition = touch.position;
+            }
+
+            if (touch.phase == TouchPhase.Moved)
+            {
+                lastFingerPosition = touch.position;
+            }
+
+            if (touch.phase == TouchPhase.Ended)
+            {
+                if ((finalFingerPosition.x - lastFingerPosition.x) > threshold) // left swipe
+                    MoveBlockToLeft();
+                else if ((finalFingerPosition.x - lastFingerPosition.x) < -threshold) // right swipe
+                    MoveBlockToRight();
+                else if ((finalFingerPosition.y - lastFingerPosition.y) < -threshold) // up swipe
+                    MoveBlockToUp();
+                else if ((finalFingerPosition.y - lastFingerPosition.y) > threshold) // down swipe
+                    MoveBlockToDown();
+            }
+        }
+
+        // Back button
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit(); 
     }
     #endregion
 }
