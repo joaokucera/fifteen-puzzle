@@ -21,28 +21,49 @@ public class Hole : MonoBehaviour
     private bool isShuffling = false;
     public int moveTimes = 50;
     private float startTimeMovement;
+    public bool isGameOver = false;
     #endregion
+
+    void OnEnable()
+    {
+        GameOver.OnGameOver += OnGameOver;
+    }
+
+    void OnDisable()
+    {
+        GameOver.OnGameOver -= OnGameOver;
+    }
+
+    void OnGameOver()
+    {
+        isGameOver = true;
+    }
 
     #region Update
     void Update()
     {
-        if (isShuffling)
-        {
-            Shuffle();
-        }
-        else
-        {
-#if UNITY_EDITOR
-            DebugInputs();
-#endif
-        }
-
         if (isMoving)
         {
             transform.position = Vector3.Lerp(origin, target, (Time.time - startTimeMovement) * (isShuffling ? 1000.0f : speed));
             blockRef.position = Vector3.Lerp(target, origin, (Time.time - startTimeMovement) * (isShuffling ? 1000.0f : speed));
             if (Vector3.Distance(transform.position, target) <= 0.0f)
                 isMoving = false;
+        }
+        else
+        {
+            if (!isGameOver)
+            {
+                if (isShuffling)
+                {
+                    Shuffle();
+                }
+                else
+                {
+#if UNITY_EDITOR
+                    DebugInputs();
+#endif
+                }
+            }
         }
     }
     #endregion

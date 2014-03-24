@@ -10,7 +10,8 @@ public class GameOver : MonoBehaviour
     #endregion
 
     private List<BlockCollider> colliders;
-    private bool isShuffling = false;
+    private bool isShuffling = true;
+    private bool isGameOver = false;
 
 	void Start () 
     {
@@ -18,24 +19,6 @@ public class GameOver : MonoBehaviour
         GameObject[] gos = GameObject.FindGameObjectsWithTag("BlockCollider");
         foreach (GameObject go in gos)
             colliders.Add(go.GetComponent<BlockCollider>());
-	}
-	
-	void LateUpdate () 
-    {
-        if (!isShuffling)
-        {
-            foreach (BlockCollider col in colliders)
-            {
-                if (!col.BlockIsRightPlace)
-                    return;
-
-                if (OnGameOver != null)
-                {
-                    Debug.Log("Game over");
-                    OnGameOver();
-                }
-            }
-        }
 	}
 
     void OnEnable()
@@ -48,6 +31,29 @@ public class GameOver : MonoBehaviour
     {
         Hole.OnStartShuffle -= OnStartShuffle;
         Hole.OnEndShuffle -= OnEndShuffle;
+    }
+
+    void Update()
+    {
+        if (!isShuffling && !isGameOver)
+        {
+            bool over = true;
+            foreach (BlockCollider col in colliders)
+            {
+                if (!col.BlockIsRightPlace)
+                {
+                    over = false;
+                    break;
+                }
+            }
+
+            if (over && OnGameOver != null)
+            {
+                isGameOver = true;
+                Debug.Log("Game over");
+                OnGameOver();
+            }
+        }
     }
 
     void OnStartShuffle()

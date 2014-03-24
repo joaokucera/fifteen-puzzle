@@ -17,6 +17,18 @@ public class BoardManager : MonoBehaviour
 
     public GUISkin skin;
     private bool isShuffling = false;
+    private bool isGameOver = false;
+
+    private Rect windowRect;
+    private Texture colorTexture;
+
+    private Texture GetTextureFromColor(Color color)
+    {
+        Texture2D texture = new Texture2D(1, 1) as Texture2D;
+        texture.SetPixel(0, 0, color);
+        texture.Apply();
+        return (Texture)texture;
+    }
 
 
     void Start()
@@ -24,6 +36,13 @@ public class BoardManager : MonoBehaviour
         btnWidth = (Screen.width - padding) / 3.0f - space;
         hole = GameObject.Find("Hole").transform;
         hole.SendMessage("Shuffle");
+
+        windowRect = new Rect(Screen.width / 2.0f - (Screen.width * 0.9f) / 2.0f,
+            Screen.height * 0.1f,
+            Screen.width * 0.9f,
+            Screen.height * 0.8f);
+
+        colorTexture = GetTextureFromColor(new Color(0.0f, 0.0f, 0.0f, 0.70f));
     }
 
     void OnEnable()
@@ -31,6 +50,7 @@ public class BoardManager : MonoBehaviour
         Hole.OnMoveBlock += OnMoveBlock;
         Hole.OnStartShuffle += OnStartShuffle;
         Hole.OnEndShuffle += OnEndShuffle;
+        GameOver.OnGameOver += OnGameOver;
         
     }
 
@@ -39,6 +59,12 @@ public class BoardManager : MonoBehaviour
         Hole.OnMoveBlock -= OnMoveBlock;
         Hole.OnStartShuffle -= OnStartShuffle;
         Hole.OnEndShuffle -= OnEndShuffle;
+        GameOver.OnGameOver -= OnGameOver;
+    }
+
+    void OnGameOver()
+    {
+        isGameOver = true;
     }
 
     void OnMoveBlock()
@@ -59,10 +85,13 @@ public class BoardManager : MonoBehaviour
 
     void Update()
     {
-        if (isShuffling)
-            startTime = Time.time;
+        if (!isGameOver)
+        {
+            if (isShuffling)
+                startTime = Time.time;
 
-         totalTime = Time.time - startTime;
+            totalTime = Time.time - startTime;
+        }
     }
 
     void OnGUI()
@@ -71,6 +100,39 @@ public class BoardManager : MonoBehaviour
             GUI.skin = skin;
         DrawHeader();
         DrawFooter();
+
+        if (isGameOver)
+        {
+            GUI.depth = 1;
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), colorTexture, ScaleMode.StretchToFill, true);
+            windowRect = GUI.ModalWindow(1, windowRect, GameOverWindow, "CONGRATULATIONS");
+        }
+    }
+
+    void GameOverWindow(int windowId)
+    {
+        GUILayout.Label("<size=16>You have sucessfully solved the puzzle</size>");
+        GUILayout.Space(20.0f);
+        GUILayout.Label("<size=16>Number of moves</size>");
+        GUILayout.Space(-5.0f);
+        GUILayout.Label(string.Format("<size=24>{0}</size>", totalMovement));
+        GUILayout.Space(10.0f);
+        GUILayout.Label("<size=16>Time take to solve</size>");
+        GUILayout.Space(-5.0f);
+        GUILayout.Label(string.Format("<size=24>{0}:{1}</size>", (totalTime / 60).ToString("00"), (totalTime % 60).ToString("00")));
+
+        GUILayout.Space(40.0f);
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button("<size=20>OK</size>"))
+        {
+            Application.LoadLevel("Level");
+        }
+
+        if (GUILayout.Button("<size=20>SHARE</size>"))
+        {
+
+        }
+        GUILayout.EndHorizontal();
     }
 
     #region Draw Header
