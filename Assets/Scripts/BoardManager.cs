@@ -130,11 +130,22 @@ public class BoardManager : MonoBehaviour
 
         if (GUILayout.Button("<size=20>SHARE</size>"))
         {
-
+            //FB.Init();
+            //FB.Login();
+           // FB.Feed();
         }
         GUILayout.EndHorizontal();
     }
     #endregion
+    byte[] TakeScreenShot()
+    {
+        Texture2D text = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
+        text.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+        text.Apply();
+        byte[] data = text.EncodeToPNG();
+        return data;
+    }
+    
 
     #region Draw Header
     void DrawHeader()
