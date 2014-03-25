@@ -2,35 +2,27 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class BoardManager : MonoBehaviour 
+public class BoardManager : MonoBehaviour
 {
+    #region Fields
+    [SerializeField]
+    private GUISkin skin;
     private Transform hole;
     private bool isPause = false;
     private float btnWidth;
     private float btnHeight = 60.0f;
     private float padding = 20.0f;
     private float space = 3.0f;
-
     private float startTime = 0.0f;
     private float totalTime = 0.0f;
     private float totalMovement = 0.0f;
-
-    public GUISkin skin;
     private bool isShuffling = false;
     private bool isGameOver = false;
-
     private Rect windowRect;
     private Texture colorTexture;
+    #endregion
 
-    private Texture GetTextureFromColor(Color color)
-    {
-        Texture2D texture = new Texture2D(1, 1) as Texture2D;
-        texture.SetPixel(0, 0, color);
-        texture.Apply();
-        return (Texture)texture;
-    }
-
-
+    #region Start
     void Start()
     {
         btnWidth = (Screen.width - padding) / 3.0f - space;
@@ -44,24 +36,22 @@ public class BoardManager : MonoBehaviour
 
         colorTexture = GetTextureFromColor(new Color(0.0f, 0.0f, 0.0f, 0.70f));
     }
+    #endregion
 
-    void OnEnable()
+    #region Update
+    void Update()
     {
-        Hole.OnMoveBlock += OnMoveBlock;
-        Hole.OnStartShuffle += OnStartShuffle;
-        Hole.OnEndShuffle += OnEndShuffle;
-        GameOver.OnGameOver += OnGameOver;
-        
-    }
+        if (!isGameOver)
+        {
+            if (isShuffling)
+                startTime = Time.time;
 
-    void OnDisable()
-    {
-        Hole.OnMoveBlock -= OnMoveBlock;
-        Hole.OnStartShuffle -= OnStartShuffle;
-        Hole.OnEndShuffle -= OnEndShuffle;
-        GameOver.OnGameOver -= OnGameOver;
+            totalTime = Time.time - startTime;
+        }
     }
+    #endregion
 
+    #region Add and Remove Delegates
     void OnGameOver()
     {
         isGameOver = true;
@@ -83,17 +73,25 @@ public class BoardManager : MonoBehaviour
         this.isShuffling = false;
     }
 
-    void Update()
+    void OnEnable()
     {
-        if (!isGameOver)
-        {
-            if (isShuffling)
-                startTime = Time.time;
+        Hole.OnMoveBlock += OnMoveBlock;
+        Hole.OnStartShuffle += OnStartShuffle;
+        Hole.OnEndShuffle += OnEndShuffle;
+        GameOver.OnGameOver += OnGameOver;
 
-            totalTime = Time.time - startTime;
-        }
     }
 
+    void OnDisable()
+    {
+        Hole.OnMoveBlock -= OnMoveBlock;
+        Hole.OnStartShuffle -= OnStartShuffle;
+        Hole.OnEndShuffle -= OnEndShuffle;
+        GameOver.OnGameOver -= OnGameOver;
+    }
+    #endregion
+
+    #region OnGUI
     void OnGUI()
     {
         if (skin)
@@ -108,7 +106,9 @@ public class BoardManager : MonoBehaviour
             windowRect = GUI.ModalWindow(1, windowRect, GameOverWindow, "CONGRATULATIONS");
         }
     }
+    #endregion
 
+    #region Game Over Window
     void GameOverWindow(int windowId)
     {
         GUILayout.Label("<size=16>You have sucessfully solved the puzzle</size>");
@@ -134,6 +134,7 @@ public class BoardManager : MonoBehaviour
         }
         GUILayout.EndHorizontal();
     }
+    #endregion
 
     #region Draw Header
     void DrawHeader()
@@ -158,7 +159,8 @@ public class BoardManager : MonoBehaviour
 
         if (GUILayout.Button("Shuffle", GUILayout.Width(btnWidth), GUILayout.Height(btnHeight)))
         {
-            hole.SendMessage("Shuffle");
+            if (!isPause)
+                hole.SendMessage("Shuffle");
         }
 
         if (GUILayout.Button((isPause ? "Resume" : "Pause"), GUILayout.Width(btnWidth), GUILayout.Height(btnHeight)))
@@ -181,5 +183,14 @@ public class BoardManager : MonoBehaviour
     }
     #endregion
 
+    #region Get Texture From Color
+    private Texture GetTextureFromColor(Color color)
+    {
+        Texture2D texture = new Texture2D(1, 1) as Texture2D;
+        texture.SetPixel(0, 0, color);
+        texture.Apply();
+        return (Texture)texture;
+    }
+    #endregion
 }
 

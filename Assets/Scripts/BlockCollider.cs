@@ -1,17 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BlockCollider : MonoBehaviour 
+public class BlockCollider : MonoBehaviour
 {
-    public int blockIndex;
+    #region Fields
+    private int blockIndex;
     public bool BlockIsRightPlace { get; set; }
+    #endregion
 
+    #region Start
     void Start()
     {
         this.blockIndex = int.Parse(name.Replace("Collider", ""));
         this.BlockIsRightPlace = true;
     }
+    #endregion
 
+    #region Draw Gizmos
+#if UNITY_EDITOR
     void OnDrawGizmos()
     {
         if (BlockIsRightPlace)
@@ -21,7 +27,10 @@ public class BlockCollider : MonoBehaviour
 
         Gizmos.DrawSphere(transform.position, 0.25f);
     }
+#endif
+    #endregion
 
+    #region Trigger Enter
     void OnTriggerEnter(Collider hit)
     {
         if (blockIndex.ToString().Equals(hit.name.Replace("Block","")))
@@ -29,4 +38,5 @@ public class BlockCollider : MonoBehaviour
         else
             BlockIsRightPlace = false;
     }
+    #endregion
 }

@@ -11,7 +11,8 @@ public class Hole : MonoBehaviour
     #endregion
 
     #region Fields
-    public float speed = 10.0f;
+    [SerializeField]
+    private float speed = 10.0f;
     private RaycastHit hit;
     private float distance = 10.0f;
     private bool isMoving = false;
@@ -19,15 +20,14 @@ public class Hole : MonoBehaviour
     private Vector3 origin;
     private Vector3 target;
     private bool isShuffling = false;
-    public int moveTimes = 50;
+    [SerializeField]
+    private int moveTimes = 300;
     private float startTimeMovement;
-    public bool isGameOver = false;
-
+    private bool isGameOver = false;
     private float threshold = 70.0f;
     private Vector2 finalFingerPosition;  
     private Vector2 lastFingerPosition; 
     #endregion
-
 
     void OnEnable()
     {
@@ -65,9 +65,9 @@ public class Hole : MonoBehaviour
                 else
                 {
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN
-                    DebugInputs();
+                    KeyboardInputs();
 #elif UNITY_ANDROID
-                    AndroidInputs();
+                    TouchInputs();
 #endif
                 }
             }
@@ -262,8 +262,8 @@ public class Hole : MonoBehaviour
     }
     #endregion
 
-    #region Debug inputs
-    void DebugInputs()
+    #region Keyboard inputs
+    void KeyboardInputs()
     {
         if (Input.GetKeyDown(KeyCode.LeftArrow))
             MoveBlockToLeft();
@@ -278,8 +278,10 @@ public class Hole : MonoBehaviour
             MoveBlockToDown();
 
     }
+    #endregion
 
-    void AndroidInputs()
+    #region Touch inputs
+    void TouchInputs()
     {
         foreach (Touch touch in Input.touches)
         {

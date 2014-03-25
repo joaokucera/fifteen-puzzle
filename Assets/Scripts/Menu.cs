@@ -4,17 +4,26 @@ using System.Collections.Generic;
 
 public class Menu : MonoBehaviour
 {
-    public Texture background;
-    public GUISkin skin;
+    #region Fields
+    [SerializeField]
+    private Texture background;
+
+    [SerializeField]
+    private GUISkin skin;
+
+    [SerializeField]
+    private AudioClip audioButtonClick;
+
     private Rect backgroundArea;
     private Rect buttonArea;
     private Rect aboutArea;
     private Rect windowRect;
+    private bool hideWindow = false;
+    private bool showingAboutWindow = false;
+    private bool showingHighScoreWindow = false;
+    #endregion
 
-    protected bool hideWindow = false;
-    protected bool showingAboutWindow = false;
-    protected bool showingHighScoreWindow = false;
-
+    #region Start
     void Start()
     {
         backgroundArea = new Rect(0.0f,
@@ -23,7 +32,7 @@ public class Menu : MonoBehaviour
             Screen.height);
 
         buttonArea = new Rect(Screen.width / 2.0f - (Screen.width * 0.5f) / 2.0f,
-            Screen.height * 0.7f,
+            Screen.height * 0.55f,
             Screen.width * 0.5f,
             Screen.height * 0.4f);
 
@@ -37,17 +46,21 @@ public class Menu : MonoBehaviour
             Screen.width * 0.8f,
             Screen.height * 0.7f);
     }
+    #endregion
 
+    #region Update
     void Update()
     {
         if (hideWindow)
         {
-            HideAboutWindow();
-            HideHighScoreWindow();
+            showingAboutWindow = false;
+            showingHighScoreWindow = false;
             hideWindow = false;
         }
     }
+    #endregion
 
+    #region OnGUI
     void OnGUI()
     {
         if (skin)
@@ -58,22 +71,38 @@ public class Menu : MonoBehaviour
             GUI.DrawTexture(backgroundArea, background, ScaleMode.ScaleToFit);
 
         if (GUI.Button(new Rect(aboutArea), "i"))
-            ShowAboutWindow();
+        {
+            showingAboutWindow = true;
+            if (audioButtonClick)
+                AudioSource.PlayClipAtPoint(audioButtonClick, Vector3.zero);
+        }
 
 
         GUILayout.BeginArea(new Rect(buttonArea));
 
         // New Game
         if (GUILayout.Button("START"))
+        {
+            if (audioButtonClick)
+                AudioSource.PlayClipAtPoint(audioButtonClick, Vector3.zero);
             Application.LoadLevel("Level");
+        }
 
         // High Score
         if (GUILayout.Button("HIGH SCORE"))
-            ShowHighScoreWindow();
+        {
+            showingHighScoreWindow = true;
+            if (audioButtonClick)
+                AudioSource.PlayClipAtPoint(audioButtonClick, Vector3.zero);
+        }
 
         // Quit Game
         if (GUILayout.Button("EXIT"))
+        {
+            if (audioButtonClick)
+                AudioSource.PlayClipAtPoint(audioButtonClick, Vector3.zero);
             Application.Quit();
+        }
 
         GUILayout.EndArea();
 
@@ -83,37 +112,29 @@ public class Menu : MonoBehaviour
         if (showingAboutWindow)
             windowRect = GUI.ModalWindow(1, windowRect, HighScoreWindow, "ABOUT");
     }
+    #endregion
 
+    #region About Window
     void AboutWindow(int windowID)
     {
         if (GUILayout.Button("BACK"))
+        {
             hideWindow = true;
+            if (audioButtonClick)
+                AudioSource.PlayClipAtPoint(audioButtonClick, Vector3.zero);
+        }
     }
+    #endregion
 
+    #region High Score Window
     void HighScoreWindow(int windowID)
     {
         if (GUILayout.Button("BACK"))
+        {
             hideWindow = true;
+            if (audioButtonClick)
+                AudioSource.PlayClipAtPoint(audioButtonClick, Vector3.zero);
+        }
     }
-
-
-    void ShowAboutWindow()
-    {
-        showingAboutWindow = true;
-    }
-
-    void ShowHighScoreWindow()
-    {
-        showingHighScoreWindow = true;
-    }
-
-    void HideAboutWindow()
-    {
-        showingAboutWindow = false;
-    }
-
-    void HideHighScoreWindow()
-    {
-        showingHighScoreWindow = false;
-    }
+    #endregion
 }
