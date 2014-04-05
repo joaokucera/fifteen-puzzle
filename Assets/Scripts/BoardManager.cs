@@ -19,7 +19,6 @@ public class BoardManager : MonoBehaviour
     private bool isShuffling = false;
     private bool isGameOver = false;
     private Rect windowRect;
-    private Texture colorTexture;
     #endregion
 
     #region Start
@@ -34,7 +33,6 @@ public class BoardManager : MonoBehaviour
             Screen.width * 0.9f,
             Screen.height * 0.8f);
 
-        colorTexture = GetTextureFromColor(new Color(0.0f, 0.0f, 0.0f, 0.70f));
     }
     #endregion
 
@@ -96,19 +94,16 @@ public class BoardManager : MonoBehaviour
     {
         if (skin)
             GUI.skin = skin;
-        DrawHeader();
-        DrawFooter();
 
         if (isGameOver)
         {
             GUI.depth = 1;
-            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), colorTexture, ScaleMode.StretchToFill, true);
+            //GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), colorTexture, ScaleMode.StretchToFill, true);
             windowRect = GUI.ModalWindow(1, windowRect, GameOverWindow, "CONGRATULATIONS");
         }
     }
     #endregion
-
-    #region Game Over Window
+	
     void GameOverWindow(int windowId)
     {
         GUILayout.Label("<size=16>You have sucessfully solved the puzzle</size>");
@@ -136,72 +131,19 @@ public class BoardManager : MonoBehaviour
         }
         GUILayout.EndHorizontal();
     }
-    #endregion
-    byte[] TakeScreenShot()
-    {
-        Texture2D text = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
-        text.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
-        text.Apply();
-        byte[] data = text.EncodeToPNG();
-        return data;
-    }
-    
 
-    #region Draw Header
-    void DrawHeader()
-    {
-        GUILayout.BeginArea(new Rect(0.0f, 10.0f, Screen.width, 120.0f));
-        GUILayout.BeginHorizontal();
+/*
         GUILayout.Label(string.Format("Moves\n{0}", totalMovement.ToString("000")),
             GUILayout.Width(Screen.width / 2.0f));
         GUILayout.Label(string.Format("Time\n{0}:{1}", (totalTime / 60).ToString("00"), (totalTime % 60).ToString("00")),
             GUILayout.Width(Screen.width / 2.0f));
-        GUILayout.EndHorizontal();
-        GUILayout.EndArea();
-    }
-    #endregion
-
-    #region Draw Buttons
-    void DrawFooter()
-    {
-        GUILayout.BeginArea(new Rect(0.0f, Screen.height - 80.0f, Screen.width, 80.0f));
-        GUILayout.BeginHorizontal();
-        GUILayout.FlexibleSpace();
 
         if (GUILayout.Button("Shuffle", GUILayout.Width(btnWidth), GUILayout.Height(btnHeight)))
         {
             if (!isPause)
                 hole.SendMessage("Shuffle");
         }
+*/
 
-        if (GUILayout.Button((isPause ? "Resume" : "Pause"), GUILayout.Width(btnWidth), GUILayout.Height(btnHeight)))
-        {
-            isPause = !isPause;
-            if (isPause)
-                Time.timeScale = 0;
-            else
-                Time.timeScale = 1;
-        }
-
-        if (GUILayout.Button("Quit", GUILayout.Width(btnWidth), GUILayout.Height(btnHeight)))
-        {
-            Application.LoadLevel("Menu");
-        }
-
-        GUILayout.FlexibleSpace();
-        GUILayout.EndHorizontal();
-        GUILayout.EndArea();
-    }
-    #endregion
-
-    #region Get Texture From Color
-    private Texture GetTextureFromColor(Color color)
-    {
-        Texture2D texture = new Texture2D(1, 1) as Texture2D;
-        texture.SetPixel(0, 0, color);
-        texture.Apply();
-        return (Texture)texture;
-    }
-    #endregion
 }
 

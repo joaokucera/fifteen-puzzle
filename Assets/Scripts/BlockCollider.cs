@@ -33,10 +33,27 @@ public class BlockCollider : MonoBehaviour
     #region Trigger Enter
     void OnTriggerEnter(Collider hit)
     {
-        if (blockIndex.ToString().Equals(hit.name.Replace("Block","")))
-            BlockIsRightPlace = true;
-        else
-            BlockIsRightPlace = false;
+        if (blockIndex.ToString ().Equals (hit.name.Replace ("Block", ""))) 
+		{
+			hit.SendMessage("RightPosition");
+			BlockIsRightPlace = true;
+		} 
+		else 
+		{
+			hit.SendMessage("WrongPosition");
+			BlockIsRightPlace = false;
+		}
     }
     #endregion
+
+	#region Trigger Exit
+	void OnTriggerExit(Collider hit)
+	{
+		if (BlockIsRightPlace) 
+		{
+			hit.SendMessage("WrongPosition");
+			BlockIsRightPlace = false;
+		} 
+	}
+	#endregion
 }
