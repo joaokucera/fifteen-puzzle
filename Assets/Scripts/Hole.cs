@@ -11,8 +11,8 @@ public class Hole : MonoBehaviour
     #endregion
 
     #region Fields
-    [SerializeField]
-    private float speed = 10.0f;
+    public float speed = 10.0f;
+    public float shufflingSpeed = 250.0f;
     private RaycastHit hit;
     private float distance = 10.0f;
     private bool isMoving = false;
@@ -20,8 +20,7 @@ public class Hole : MonoBehaviour
     private Vector3 origin;
     private Vector3 target;
     private bool isShuffling = false;
-    [SerializeField]
-    private int moveTimes = 300;
+    public int moveTimes = 200;
     private float startTimeMovement;
     private bool isGameOver = false;
     private float threshold = 70.0f;
@@ -49,10 +48,14 @@ public class Hole : MonoBehaviour
     {
         if (isMoving)
         {
-            transform.position = Vector3.Lerp(origin, target, (Time.time - startTimeMovement) * (isShuffling ? 1000.0f : speed));
-            blockRef.position = Vector3.Lerp(target, origin, (Time.time - startTimeMovement) * (isShuffling ? 1000.0f : speed));
+            transform.position = Vector3.Lerp(origin, target, (Time.time - startTimeMovement) * (isShuffling ? shufflingSpeed : speed));
+            blockRef.position = Vector3.Lerp(target, origin, (Time.time - startTimeMovement) * (isShuffling ? shufflingSpeed : speed));
             if (Vector3.Distance(transform.position, target) <= 0.0f)
+            {
                 isMoving = false;
+                transform.position = target;
+                blockRef.position = origin; 
+            }
         }
         else
         {
