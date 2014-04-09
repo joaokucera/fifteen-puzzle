@@ -32,15 +32,18 @@ public class LoadingScreen : MonoBehaviour
 
     public Material[] backgrounds;
     public Material[] materials;
+    public string[] phrases;
 
     private int index = 0;
     private GameObject loadingBar;
+    private TextMesh phrase;
     private AsyncOperation async;
     private float progress = 0.0f;
 
     void Start()
     {
         loadingBar = transform.GetChild(0).gameObject;
+        phrase = transform.GetChild(1).GetComponent<TextMesh>();
     }
 
     public void Load(string name)
@@ -58,14 +61,6 @@ public class LoadingScreen : MonoBehaviour
             renderer.material = backgrounds[Random.Range(0, backgrounds.Length)];
     }
 
-    void Update()
-    {
-        if (async != null)
-        {
-            
-        } 
-    }
-
     IEnumerator Loading(string name)
     {
         yield return new WaitForSeconds(0.2f);
@@ -77,14 +72,19 @@ public class LoadingScreen : MonoBehaviour
             yield return null;
         }
 
+        loadingBar.renderer.material = materials[materials.Length - 1];
+        yield return new WaitForSeconds(0.2f);
         SendMessage("Hide");
         async = null;
     }
 
     void ChangeLoadMaterial()
     {
-        progress = async.progress * materials.Length;
+        progress = async.progress * materials.Length + 1;
         index = (int) Mathf.Clamp(progress, 0, materials.Length - 1);
         loadingBar.renderer.material = materials[index];
+
+        if (phrases.Length > 1)
+            phrase.text = phrases[(int)Mathf.Clamp(async.progress * phrases.Length, 0, phrases.Length - 1)];
     }
 }
